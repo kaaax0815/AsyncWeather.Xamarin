@@ -1,16 +1,16 @@
-﻿using System;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Webkit;
 using Android.Widget;
-using Xamarin.Essentials;
 using Syncfusion.Android.ProgressBar;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace AsyncWeather.Xamarin
 {
@@ -75,10 +75,19 @@ namespace AsyncWeather.Xamarin
             RunOnUiThread(async () => FindViewById<TextView>(Resource.Id.text).Text = await Get());
         }
 
+        private async void SetWebView() // Doesnt lag, but no nice customization and scrollbar
+        {
+            WebView webView1 = FindViewById<WebView>(Resource.Id.webView1);
+            webView1.HorizontalScrollBarEnabled = false;
+            webView1.CanScrollHorizontally(0);
+            string content = await Get();
+            webView1.LoadDataWithBaseURL("", content, "text/html", "UTF-8", "");
+        }
+
         private void FabOnClick(object sender, EventArgs eventArgs)
         {
-            //SetAsyncText(); or SetAsyncTextOriginal();
-            SetAsyncText();
+            //SetAsyncText(); or SetAsyncTextOriginal(); or SetWebview();
+            SetWebView();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -95,35 +104,35 @@ namespace AsyncWeather.Xamarin
             string url = "https://api.openweathermap.org/data/2.5/onecall?lat=50&lon=10&appid=89f453dd00317568c5655dddece7f2a7";
 
             // The actual Get method
-            using var result1 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result1 = await _httpClient.GetAsync($"{url}");
             string content1 = await result1.Content.ReadAsStringAsync();
 
             // The actual Get method
-            using var result2 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result2 = await _httpClient.GetAsync($"{url}");
             string content2 = await result2.Content.ReadAsStringAsync();
 
             // The actual Get method
-            using var result3 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result3 = await _httpClient.GetAsync($"{url}");
             string content3 = await result3.Content.ReadAsStringAsync();
 
             // The actual Get method
-            using var result4 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result4 = await _httpClient.GetAsync($"{url}");
             string content4 = await result4.Content.ReadAsStringAsync();
 
             // The actual Get method
-            using var result5 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result5 = await _httpClient.GetAsync($"{url}");
             string content5 = await result5.Content.ReadAsStringAsync();
             // The actual Get method
-            using var result6 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result6 = await _httpClient.GetAsync($"{url}");
             string content6 = await result6.Content.ReadAsStringAsync();
             // The actual Get method
-            using var result7 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result7 = await _httpClient.GetAsync($"{url}");
             string content7 = await result7.Content.ReadAsStringAsync();
             // The actual Get method
-            using var result8 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result8 = await _httpClient.GetAsync($"{url}");
             string content8 = await result8.Content.ReadAsStringAsync();
             // The actual Get method
-            using var result9 = await _httpClient.GetAsync($"{url}");
+            using HttpResponseMessage result9 = await _httpClient.GetAsync($"{url}");
             string content9 = await result9.Content.ReadAsStringAsync();
 
             return content1 + content2 + content3 + content4 + content5 + content6 + content7 + content8 + content9;

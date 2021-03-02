@@ -9155,10 +9155,13 @@ namespace AsyncWeather.Xamarin
 			public const int visible = 2131230929;
 			
 			// aapt resource value: 0x7F0800D2
-			public const int withText = 2131230930;
+			public const int webView1 = 2131230930;
 			
 			// aapt resource value: 0x7F0800D3
-			public const int wrap_content = 2131230931;
+			public const int withText = 2131230931;
+			
+			// aapt resource value: 0x7F0800D4
+			public const int wrap_content = 2131230932;
 			
 			static Id()
 			{

@@ -8,11 +8,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <android.webkit.WebView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/text"
-        android:text="Hello World!" />
+        android:id="@+id/webView1" />
 
 </RelativeLayout>
