@@ -7,12 +7,14 @@ using Android.Support.V7.App;
 using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
+using Com.Syncfusion.Charts;
 using Newtonsoft.Json;
 using Plugin.Geolocator;
 using Square.Picasso;
 using Syncfusion.Android.ProgressBar;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Net.Http;
 using System.Text;
@@ -36,6 +38,7 @@ namespace AsyncWeather.Xamarin
         readonly string locationiq = "cGsuMGNlZDAwYmQ5MjZkYmQ2ZDFlYTY0OTQxNDkxZjIyOGE=";
         OneClickApi oneClickApi { get; set; }
         ReverseGeocoding reverseGeocoding { get; set; }
+        bool search_clicked = false;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Encoding.UTF8.GetString(Convert.FromBase64String(syncfusionlicense)));
@@ -44,6 +47,18 @@ namespace AsyncWeather.Xamarin
             SetContentView(Resource.Layout.activity_main);
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
+            FindViewById<LinearLayout>(Resource.Id.forecast_1_layout).Click += Forecast1_Click;
+            FindViewById<LinearLayout>(Resource.Id.forecast_2_layout).Click += Forecast2_Click;
+            FindViewById<LinearLayout>(Resource.Id.forecast_3_layout).Click += Forecast3_Click;
+            FindViewById<LinearLayout>(Resource.Id.forecast_4_layout).Click += Forecast4_Click;
+            FindViewById<LinearLayout>(Resource.Id.forecast_5_layout).Click += Forecast5_Click;
+            FindViewById<LinearLayout>(Resource.Id.forecast_6_layout).Click += Forecast6_Click;
+            FindViewById<LinearLayout>(Resource.Id.forecast_7_layout).Click += Forecast7_Click;
+            FindViewById<Button>(Resource.Id.nointernet_retry).Click += Retry_Click;
+            string[] COUNTRIES = { "Wülfershausen", "Kassel", "Berlin" };
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, Resource.Layout.list_item, COUNTRIES);
+            AutoCompleteTextView textView = FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1);
+            textView.Adapter = adapter;
             InitProgressbar();
             if (IsOnline())
             {
@@ -54,6 +69,132 @@ namespace AsyncWeather.Xamarin
             {
                 FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Visible;
                 OfflineWeather();
+            }
+        }
+
+        private void Retry_Click(object sender, EventArgs e)
+        {
+            if (IsOnline())
+            {
+                FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Gone;
+                OnlineWeather();
+            }
+            else
+            {
+                FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Visible;
+                OfflineWeather();
+            }
+        }
+
+        private void Forecast7_Click(object sender, EventArgs e)
+        {
+            int i = 7;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
+            }
+        }
+
+        private void Forecast6_Click(object sender, EventArgs e)
+        {
+            int i = 6;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
+            }
+        }
+
+        private void Forecast5_Click(object sender, EventArgs e)
+        {
+            int i = 5;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
+            }
+        }
+
+        private void Forecast4_Click(object sender, EventArgs e)
+        {
+            int i = 4;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
+            }
+        }
+
+        private void Forecast3_Click(object sender, EventArgs e)
+        {
+            int i = 3;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
+            }
+        }
+
+        private void Forecast2_Click(object sender, EventArgs e)
+        {
+            int i = 2;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
+            }
+        }
+
+        private void Forecast1_Click(object sender, EventArgs e)
+        {
+            int i = 1;
+            if (oneClickApi != null)
+            {
+                FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.morn.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.day.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.eve.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[i].temp.night.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[i].feels_like.night.ToString() + "°C";
             }
         }
 
@@ -85,21 +226,20 @@ namespace AsyncWeather.Xamarin
                 }
                 return true;
             }
-            /**if (id == Resource.Id.action_search)
+            if (id == Resource.Id.action_search)
             {
                 if (search_clicked)
                 {
                     FindViewById<LinearLayout>(Resource.Id.search_layout).Visibility = ViewStates.Gone;
                     search_clicked = false;
-                    GetWeather();
-                    search_clicked = false;
+                    // GetOnlineWeather();
                     return true;
                 }
                 FindViewById<LinearLayout>(Resource.Id.search_layout).Visibility = ViewStates.Visible;
-                FindViewById<EditText>(Resource.Id.search_edit).RequestFocus();
+                FindViewById<EditText>(Resource.Id.autoCompleteTextView1).RequestFocus();
                 search_clicked = true;
 
-            }**/
+            }
             return base.OnOptionsItemSelected(item);
         }
 
@@ -116,7 +256,7 @@ namespace AsyncWeather.Xamarin
             return cm.ActiveNetworkInfo != null && cm.ActiveNetworkInfo.IsConnected;
         }
         // Get and Returns Location or Error
-        public static async Task<double[]> GetLocation()
+        public async Task<double[]> GetLocation()
         {
             try
             {
@@ -139,7 +279,8 @@ namespace AsyncWeather.Xamarin
             catch (FeatureNotEnabledException)
             {
                 // Open Location Setting
-                // StartActivity(new Intent(Android.Provider.Settings.ActionLocationSourceSettings));
+                ShowMessageBox(GetString(Resource.String.location_error), GetString(Resource.String.featurenotenabled));
+                StartActivity(new Android.Content.Intent(Android.Provider.Settings.ActionLocationSourceSettings));
                 double[] double_feature = { 594, 0 };
                 return double_feature;
             }
@@ -162,12 +303,14 @@ namespace AsyncWeather.Xamarin
             }
             catch (Exception loce)
             {
+                string response = await Post(loce.ToString());
+                ShowMessageBox(GetString(Resource.String.location_error), GetString(Resource.String.location_error_dev) + "<a href=\"" + response + "\">" + response + "</a>");
                 double[] double_generic = { 505, 0 };
                 return double_generic;
             }
         }
 
-        public static async Task<string> GetWeather(double[] loc, string lang, string key)
+        public async Task<string> GetWeather(double[] loc, string lang, string key)
         {
             try
             {
@@ -178,12 +321,13 @@ namespace AsyncWeather.Xamarin
             }
             catch (Exception weathere)
             {
-                return "505";
+                string response = await Post(weathere.ToString());
+                ShowMessageBox(GetString(Resource.String.requesterror), GetString(Resource.String.requesterror_dev) + "<a href=\"" + response + "\">" + response + "</a>");
+                return "h500";
             }
-            // return "h501";
         }
 
-        public static async Task<string> GetReverseLocation(double[] loc, string key)
+        public async Task<string> GetReverseLocation(double[] loc, string key)
         {
             try
             {
@@ -192,11 +336,12 @@ namespace AsyncWeather.Xamarin
                 string reverse = await Get("https://us1.locationiq.com/v1/reverse.php?key=" + key + "&lat=" + lat.Replace(",", ".") + "&lon=" + lon.Replace(",", ".") + "&format=json");
                 return reverse;
             }
-            catch (Exception weathere)
+            catch (Exception reverseloce)
             {
-                return "505";
+                string response = await Post(reverseloce.ToString());
+                ShowMessageBox(GetString(Resource.String.requesterror), GetString(Resource.String.requesterror_dev) + "<a href=\"" + response + "\">" + response + "</a>");
+                return "h500";
             }
-            // return "h501";
         }
 
 
@@ -204,9 +349,16 @@ namespace AsyncWeather.Xamarin
 
         public static async Task<string> Get(string url)
         {
-            using HttpResponseMessage result1 = await _httpClient.GetAsync($"{url}");
-            string content = await result1.Content.ReadAsStringAsync();
-            return content;
+            try
+            {
+                using HttpResponseMessage result1 = await _httpClient.GetAsync($"{url}");
+                string content = await result1.Content.ReadAsStringAsync();
+                return content;
+            }
+            catch (Exception)
+            {
+                return "250";
+            }
         }
 
         public static async Task<string> Post(string content)
@@ -254,10 +406,7 @@ namespace AsyncWeather.Xamarin
             {
                 StartProgresbar();
                 double[] loc = await GetLocation();
-                while (loc[0] == 250)
-                {
-                    loc = await GetLocation();
-                }
+                if (loc[0] > 180){return;}
                 string weather = await GetWeather(loc, lang, Encoding.UTF8.GetString(Convert.FromBase64String(openweathermap)));
                 string reverse = await GetReverseLocation(loc, Encoding.UTF8.GetString(Convert.FromBase64String(locationiq)));
                 DeserializeWeather(weather);
@@ -268,7 +417,7 @@ namespace AsyncWeather.Xamarin
                 SetAlerts();
                 StopProgressbar();
             }
-            catch(Exception onlinee)
+            catch (Exception onlinee)
             {
                 string response = await Post(onlinee.ToString());
                 ShowMessageBox("ERROR", GetString(Resource.String.requesterror_dev) + " <a href=\"" + response + "\">" + response + "</a>");
@@ -287,11 +436,16 @@ namespace AsyncWeather.Xamarin
 
         public void OfflineWeather()
         {
-            //StartProgresbar();
-            //string weather = Preferences.Get("offline_weather", "");
-            //DeserializeWeather(weather);
-            //SetText();
-            //StopProgressbar();
+            FindViewById<TextView>(Resource.Id.lastupdatetxt).Text = GetString(Resource.String.lastupdate) + " " + Preferences.Get("offline_time", "");
+            StartProgresbar();
+            string weather = Preferences.Get("offline_weather", "");
+            string reverse = Preferences.Get("offline_loc", "");
+            DeserializeWeather(weather);
+            DeserializeReverse(reverse);
+            SetText();
+            SetChart();
+            SetAlerts();
+            StopProgressbar();
         }
 
         public void DeserializeWeather(string json)
@@ -317,7 +471,7 @@ namespace AsyncWeather.Xamarin
             alert.SetCancelable(false);
             alert.SetView(textview);
             alert.SetIcon(Resource.Drawable.main_warning);
-            alert.SetNeutralButton(GetString(Resource.String.ok), (senderAlert, args) =>
+            alert.SetPositiveButton(GetString(Resource.String.ok), (senderAlert, args) =>
             {
                 sfLinearProgressBar.Visibility = ViewStates.Gone;
                 return;
@@ -339,7 +493,7 @@ namespace AsyncWeather.Xamarin
             string url = "https://openweathermap.org/img/wn/" + oneClickApi.current.weather[0].icon + "@4x.png";
             Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
             FindViewById<TextView>(Resource.Id.temp_txt).Text = oneClickApi.current.temp + "°C";
-            FindViewById<TextView>(Resource.Id.feelslike_txt).Text = GetString(Resource.String.feelslike) + oneClickApi.current.feels_like + "°C";
+            FindViewById<TextView>(Resource.Id.feelslike_txt).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.current.feels_like + "°C";
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             FindViewById<TextView>(Resource.Id.sunrise_txt).Text = dtDateTime.AddSeconds(oneClickApi.current.sunrise).ToLocalTime().ToString("g");
             FindViewById<TextView>(Resource.Id.sunset_txt).Text = dtDateTime.AddSeconds(oneClickApi.current.sunset).ToLocalTime().ToString("g");
@@ -350,69 +504,173 @@ namespace AsyncWeather.Xamarin
             if (oneClickApi.current.rain != null && oneClickApi.current.rain._1h > 0.01)
             {
                 FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + oneClickApi.current.rain._1h + GetString(Resource.String.rain) + "1h";
+                FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + oneClickApi.current.rain._1h + GetString(Resource.String.rain) + " " + " 1h";
             }
             else if (oneClickApi.current.snow != null && oneClickApi.current.snow._1h > 0.01)
             {
                 FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + oneClickApi.current.snow._1h + GetString(Resource.String.snow) + "1h";
+                FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + oneClickApi.current.snow._1h + GetString(Resource.String.snow) + " " + " 1h";
             }
             // Forecast
             FindViewById<TextView>(Resource.Id.forecast1_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d");
             string forecast1_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[1].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast1_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast1_img));
-            FindViewById<TextView>(Resource.Id.forecast1_max).Text = GetString(Resource.String.max) + oneClickApi.daily[1].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast1_min).Text = GetString(Resource.String.min) + oneClickApi.daily[1].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast1_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[1].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast1_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[1].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast1_pop).Text = oneClickApi.daily[1].pop.ToString("P0");
             FindViewById<TextView>(Resource.Id.forecast2_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d");
             string forecast2_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[2].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast2_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast2_img));
-            FindViewById<TextView>(Resource.Id.forecast2_max).Text = GetString(Resource.String.max) + oneClickApi.daily[2].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast2_min).Text = GetString(Resource.String.min) + oneClickApi.daily[2].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast2_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[2].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast2_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[2].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast2_pop).Text = oneClickApi.daily[2].pop.ToString("P0");
             FindViewById<TextView>(Resource.Id.forecast3_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d");
             string forecast3_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[3].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast3_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast3_img));
-            FindViewById<TextView>(Resource.Id.forecast3_max).Text = GetString(Resource.String.max) + oneClickApi.daily[3].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast3_min).Text = GetString(Resource.String.min) + oneClickApi.daily[3].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast3_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[3].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast3_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[3].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast3_pop).Text = oneClickApi.daily[3].pop.ToString("P0");
             FindViewById<TextView>(Resource.Id.forecast4_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d");
             string forecast4_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[4].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast4_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast4_img));
-            FindViewById<TextView>(Resource.Id.forecast4_max).Text = GetString(Resource.String.max) + oneClickApi.daily[4].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast4_min).Text = GetString(Resource.String.min) + oneClickApi.daily[4].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast4_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[4].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast4_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[4].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast4_pop).Text = oneClickApi.daily[4].pop.ToString("P0");
             FindViewById<TextView>(Resource.Id.forecast5_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d");
             string forecast5_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[5].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast5_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast5_img));
-            FindViewById<TextView>(Resource.Id.forecast5_max).Text = GetString(Resource.String.max) + oneClickApi.daily[5].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast5_min).Text = GetString(Resource.String.min) + oneClickApi.daily[5].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast5_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[5].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast5_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[5].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast5_pop).Text = oneClickApi.daily[5].pop.ToString("P0");
             FindViewById<TextView>(Resource.Id.forecast6_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d");
             string forecast6_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[6].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast6_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast6_img));
-            FindViewById<TextView>(Resource.Id.forecast6_max).Text = GetString(Resource.String.max) + oneClickApi.daily[6].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast6_min).Text = GetString(Resource.String.min) + oneClickApi.daily[6].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast6_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[6].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast6_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[6].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast6_pop).Text = oneClickApi.daily[6].pop.ToString("P0");
             FindViewById<TextView>(Resource.Id.forecast7_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d");
             string forecast7_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[7].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast7_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast7_img));
-            FindViewById<TextView>(Resource.Id.forecast7_max).Text = GetString(Resource.String.max) + oneClickApi.daily[7].temp.max.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.forecast7_min).Text = GetString(Resource.String.min) + oneClickApi.daily[7].temp.min.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast7_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[7].temp.max.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.forecast7_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[7].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast7_pop).Text = oneClickApi.daily[7].pop.ToString("P0");
             // Forecast Info
-            FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + oneClickApi.daily[1].temp.morn.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[1].feels_like.morn.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + oneClickApi.daily[1].temp.day.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[1].feels_like.day.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + oneClickApi.daily[1].temp.eve.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[1].feels_like.eve.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + oneClickApi.daily[1].temp.night.ToString() + "°C";
-            FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + oneClickApi.daily[1].feels_like.night.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.temp_mor).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[1].temp.morn.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.feels_mor).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[1].feels_like.morn.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.temp_day).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[1].temp.day.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.feels_day).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[1].feels_like.day.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.temp_eve).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[1].temp.eve.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.feels_eve).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[1].feels_like.eve.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[1].temp.night.ToString() + "°C";
+            FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[1].feels_like.night.ToString() + "°C";
         }
         public void SetChart()
         {
-
+            // Chart
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            SfChart chart = FindViewById<SfChart>(Resource.Id.sfChart1);
+            chart.Series.Clear();
+            //Initializing Primary Axis
+            CategoryAxis primaryAxis = new CategoryAxis();
+            chart.PrimaryAxis = primaryAxis;
+            //Initializing Secondary Axis
+            NumericalAxis secondaryAxis = new NumericalAxis();
+            chart.SecondaryAxis = secondaryAxis;
+            // Populate Temp Series
+            ObservableCollection<TempChart> tempchart = new ObservableCollection<TempChart>
+                {
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[0].dt).ToLocalTime().ToString("d"), oneClickApi.daily[0].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[0].dt).ToLocalTime().ToString("d"), oneClickApi.daily[0].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[0].dt).ToLocalTime().ToString("d"), oneClickApi.daily[0].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[0].dt).ToLocalTime().ToString("d"), oneClickApi.daily[0].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d"), oneClickApi.daily[1].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d"), oneClickApi.daily[1].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d"), oneClickApi.daily[1].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d"), oneClickApi.daily[1].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d"), oneClickApi.daily[2].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d"), oneClickApi.daily[2].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d"), oneClickApi.daily[2].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d"), oneClickApi.daily[2].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d"), oneClickApi.daily[3].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d"), oneClickApi.daily[3].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d"), oneClickApi.daily[3].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d"), oneClickApi.daily[3].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d"), oneClickApi.daily[4].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d"), oneClickApi.daily[4].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d"), oneClickApi.daily[4].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d"), oneClickApi.daily[4].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d"), oneClickApi.daily[5].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d"), oneClickApi.daily[5].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d"), oneClickApi.daily[5].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d"), oneClickApi.daily[5].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d"), oneClickApi.daily[6].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d"), oneClickApi.daily[6].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d"), oneClickApi.daily[6].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d"), oneClickApi.daily[6].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d"), oneClickApi.daily[7].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d"), oneClickApi.daily[7].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d"), oneClickApi.daily[7].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d"), oneClickApi.daily[7].temp.night)
+                };
+            AreaSeries tempseries = (new AreaSeries()
+            {
+                ItemsSource = tempchart,
+                XBindingPath = "Date",
+                YBindingPath = "Temperature"
+            });
+            tempseries.TooltipEnabled = true;
+            tempseries.Label = GetString(Resource.String.tempchart);
+            tempseries.VisibilityOnLegend = Visibility.Visible;
+            tempseries.Color = Android.Graphics.Color.Red;
+            chart.Series.Add(tempseries);
+            ObservableCollection<RainChart> rainchart = new ObservableCollection<RainChart>
+                {
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[0].dt).ToLocalTime().ToString("d"), oneClickApi.daily[0].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d"), oneClickApi.daily[1].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d"), oneClickApi.daily[2].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d"), oneClickApi.daily[3].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d"), oneClickApi.daily[4].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d"), oneClickApi.daily[5].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d"), oneClickApi.daily[6].rain),
+                    new RainChart(dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d"), oneClickApi.daily[7].rain)
+                };
+            AreaSeries rainseries = (new AreaSeries()
+            {
+                ItemsSource = rainchart,
+                XBindingPath = "Date",
+                YBindingPath = "Rain"
+            });
+            rainseries.TooltipEnabled = true;
+            rainseries.Label = GetString(Resource.String.rainchart);
+            rainseries.VisibilityOnLegend = Visibility.Visible;
+            rainseries.Color = Android.Graphics.Color.Blue;
+            chart.Series.Add(rainseries);
+            if (oneClickApi.daily[0].snow > 0.001 || oneClickApi.daily[1].snow > 0.001 || oneClickApi.daily[2].snow > 0.001 || oneClickApi.daily[3].snow > 0.001 || oneClickApi.daily[4].snow > 0.001 || oneClickApi.daily[5].snow > 0.001 || oneClickApi.daily[6].snow > 0.001 || oneClickApi.daily[7].snow > 0.001)
+            {
+                ObservableCollection<SnowChart> snowchart = new ObservableCollection<SnowChart>
+                    {
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[0].dt).ToLocalTime().ToString("d"), oneClickApi.daily[0].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d"), oneClickApi.daily[1].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d"), oneClickApi.daily[2].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d"), oneClickApi.daily[3].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d"), oneClickApi.daily[4].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d"), oneClickApi.daily[5].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d"), oneClickApi.daily[6].snow),
+                        new SnowChart(dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d"), oneClickApi.daily[7].snow)
+                    };
+                AreaSeries snowseries = (new AreaSeries()
+                {
+                    ItemsSource = snowchart,
+                    XBindingPath = "Date",
+                    YBindingPath = "Snow"
+                });
+                snowseries.TooltipEnabled = true;
+                snowseries.Label = GetString(Resource.String.snowchart);
+                snowseries.VisibilityOnLegend = Visibility.Visible;
+                snowseries.Color = Android.Graphics.Color.LightGray;
+                chart.Series.Add(snowseries);
+            }
+            chart.Legend.Visibility = Visibility.Visible;
         }
         public void SetAlerts()
         {
@@ -441,6 +699,37 @@ namespace AsyncWeather.Xamarin
                 alerts.Text = GetString(Resource.String.noalerts);
             }
         }
+    }
+    // Chart Data
+    public class TempChart
+    {
+        public TempChart(string date, double temperature)
+        {
+            this.Date = date;
+            this.Temperature = temperature;
+        }
+        public string Date { get; set; }
+        public double Temperature { get; set; }
+    }
+    public class RainChart
+    {
+        public RainChart(string date, double rain)
+        {
+            this.Date = date;
+            this.Rain = rain;
+        }
+        public string Date { get; set; }
+        public double Rain { get; set; }
+    }
+    public class SnowChart
+    {
+        public SnowChart(string date, double snow)
+        {
+            this.Date = date;
+            this.Snow = snow;
+        }
+        public string Date { get; set; }
+        public double Snow { get; set; }
     }
     // Deserialization
     public class Weather
