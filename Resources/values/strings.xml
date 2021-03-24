@@ -2,7 +2,7 @@
   <string name="app_name">AsyncWeather.Xamarin</string>
   <string name="navigation_drawer_open">Open navigation drawer</string>
   <string name="navigation_drawer_close">Close navigation drawer</string>
-  <string name="feelslike">Feels like:</string>
+  <string name="feelslike">Like:</string>
   <string name="lastupdate">Last Update:</string>
   <string name="max">Max:</string>
   <string name="min">Min:</string>
@@ -33,4 +33,5 @@
   <string name="featurenotenabled">There was an error getting your Location. Please enable Location Services!</string>
   <string name="location_error">Error while getting Location</string>
   <string name="location_error_dev">There was an error getting your Location. Please share this url with Developers:</string>
+  <string name="forecast">Forecast</string>
 </resources>
