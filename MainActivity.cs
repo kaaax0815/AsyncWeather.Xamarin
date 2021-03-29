@@ -27,7 +27,7 @@ namespace AsyncWeather.Xamarin
     /// Error Codes: 199 = Permission; 505 = Generic; 594 = Feature; 250 = Try Again
     /// HTML Codes: hXXX = XXX HTML Error
     /// </summary>
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
         SfLinearProgressBar sfLinearProgressBar { get; set; }
