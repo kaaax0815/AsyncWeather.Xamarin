@@ -34,4 +34,6 @@
   <string name="location_error">Error while getting Location</string>
   <string name="location_error_dev">There was an error getting your Location. Please share this url with Developers:</string>
   <string name="forecast">Forecast</string>
+  <string name="today">Today</string>
+  <string name="tomorrow">Tomorrow</string>
 </resources>

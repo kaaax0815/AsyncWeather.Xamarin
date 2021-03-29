@@ -584,43 +584,43 @@ namespace AsyncWeather.Xamarin
             FindViewById<TextView>(Resource.Id.today_temp_night).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[0].temp.night.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.today_feels_night).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[0].feels_like.night.ToString() + "°C";
             // Forecast
-            FindViewById<TextView>(Resource.Id.forecast1_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast1_date).Text = GetString(Resource.String.today) + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d");
             string forecast1_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[1].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast1_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast1_img));
             FindViewById<TextView>(Resource.Id.forecast1_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[1].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast1_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[1].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast1_pop).Text = oneClickApi.daily[1].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast2_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast2_date).Text = GetString(Resource.String.tomorrow) + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d");
             string forecast2_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[2].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast2_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast2_img));
             FindViewById<TextView>(Resource.Id.forecast2_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[2].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast2_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[2].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast2_pop).Text = oneClickApi.daily[2].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast3_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast3_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("dddd") + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[3].dt).ToLocalTime().ToString("d");
             string forecast3_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[3].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast3_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast3_img));
             FindViewById<TextView>(Resource.Id.forecast3_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[3].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast3_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[3].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast3_pop).Text = oneClickApi.daily[3].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast4_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast4_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("dddd") + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[4].dt).ToLocalTime().ToString("d");
             string forecast4_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[4].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast4_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast4_img));
             FindViewById<TextView>(Resource.Id.forecast4_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[4].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast4_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[4].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast4_pop).Text = oneClickApi.daily[4].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast5_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast5_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("dddd") + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[5].dt).ToLocalTime().ToString("d");
             string forecast5_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[5].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast5_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast5_img));
             FindViewById<TextView>(Resource.Id.forecast5_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[5].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast5_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[5].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast5_pop).Text = oneClickApi.daily[5].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast6_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast6_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("dddd") + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[6].dt).ToLocalTime().ToString("d");
             string forecast6_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[6].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast6_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast6_img));
             FindViewById<TextView>(Resource.Id.forecast6_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[6].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast6_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[6].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast6_pop).Text = oneClickApi.daily[6].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast7_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast7_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("dddd") + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[7].dt).ToLocalTime().ToString("d");
             string forecast7_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[7].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast7_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast7_img));
             FindViewById<TextView>(Resource.Id.forecast7_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[7].temp.max.ToString() + "°C";
@@ -749,21 +749,19 @@ namespace AsyncWeather.Xamarin
             TextView alerts = FindViewById<TextView>(Resource.Id.alerts);
             if (oneClickApi.alerts != null)
             {
-
-                if (oneClickApi.alerts.Count > 1)
+                foreach (Alert alert in oneClickApi.alerts)
                 {
-                    if (oneClickApi.alerts.Count > 2)
+                    string alertstext = alerts.Text;
+                    if (alertstext == GetString(Resource.String.placeholder) || alertstext == GetString(Resource.String.noalerts))
                     {
-                        alerts.Text = oneClickApi.alerts[0].sender_name + ": " + oneClickApi.alerts[0].description + "\n\n" + oneClickApi.alerts[1].sender_name + ": " + oneClickApi.alerts[1].description + "\n\n" + oneClickApi.alerts[2].sender_name + ": " + oneClickApi.alerts[2].description;
+                        alerts.Text = alert.sender_name + ": " + alert.description;
+                        //alerts.TextFormatted = HtmlCompat.FromHtml(alert.sender_name + ": </u>" + alert.description, HtmlCompat.FromHtmlModeLegacy);
                     }
                     else
                     {
-                        alerts.Text = oneClickApi.alerts[0].sender_name + ": " + oneClickApi.alerts[0].description + "\n\n" + oneClickApi.alerts[1].sender_name + ": " + oneClickApi.alerts[1].description;
+                        alerts.Text = alertstext + "\n---\n" + alert.sender_name + ": " + alert.description;
+                        //alerts.TextFormatted = HtmlCompat.FromHtml(alerts.TextFormatted + "<br>---<br>" + "<u>" + alert.sender_name + ": </u>" + alert.description, HtmlCompat.FromHtmlModeCompact);
                     }
-                }
-                else
-                {
-                    alerts.Text = oneClickApi.alerts[0].sender_name + ": " + oneClickApi.alerts[0].description;
                 }
             }
             else

@@ -381,12 +381,12 @@
             </LinearLayout>
         </GridLayout>
         <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
             android:layout_marginTop="35px"
             android:layout_below="@id/today_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/seperator1_line"
-            style="@style/Divider.Horizontal"/>
+            android:background="#767676" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -422,6 +422,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast1_date"/>
@@ -471,6 +472,7 @@
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
                         android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast2_date"/>
                     <ImageView
@@ -519,6 +521,7 @@
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
                         android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast3_date"/>
                     <ImageView
@@ -560,6 +563,7 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_4_layout">
@@ -608,6 +612,7 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_5_layout">
@@ -656,6 +661,7 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_6_layout">
@@ -704,6 +710,7 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_7_layout">
