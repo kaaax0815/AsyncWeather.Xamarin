@@ -35,6 +35,8 @@ namespace AsyncWeather.Xamarin
         readonly string openweathermap = "ODlmNDUzZGQwMDMxNzU2OGM1NjU1ZGRkZWNlN2YyYTc=";
         readonly string syncfusionlicense = "TXpjMU9UazFRRE14TXpneVpUTTBNbVV6TUVwR1VpOTZOR0ZySzJ4clUwbzJlbUoxY0hwbVltNW1aa05xVkVwUVVFUTBNVzFzYkhOalVuSmFaV3M5";
         readonly string locationiq = "cGsuMGNlZDAwYmQ5MjZkYmQ2ZDFlYTY0OTQxNDkxZjIyOGE=";
+        readonly int cachehr = 3; // Default Cache Duration
+        readonly long hto100ns = 36000000000;
         OneClickApi oneClickApi { get; set; }
         ReverseGeocoding reverseGeocoding { get; set; }
         List<ForwardGeocoding> forwardGeocoding { get; set; }
@@ -64,7 +66,34 @@ namespace AsyncWeather.Xamarin
             if (IsOnline())
             {
                 FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Gone;
-                OnlineWeather();
+                if (Preferences.ContainsKey("offline_time"))
+                {
+                    long l = 0;
+                    long longoffline_time = 0;
+                    try
+                    {
+                        longoffline_time = Preferences.Get("offline_time", l);
+                    }
+                    catch (Java.Lang.ClassCastException)
+                    {
+                        Preferences.Clear();
+                        ShowMessageBox("Old Configuration", "Restart to get Weather");
+                        return;
+                    }
+                    DateTime offline_time = DateTime.FromFileTimeUtc(longoffline_time).ToLocalTime();
+                    if (offline_time.ToFileTime() <= DateTime.Now.ToFileTime() - (cachehr * hto100ns)) // Check if "offline_time" is longer than "cachehr" hours ago
+                    {
+                        OnlineWeather();
+                    }
+                    else
+                    {
+                        OfflineWeather();
+                    }
+                }
+                else
+                {
+                    OnlineWeather();
+                }
             }
             else
             {
@@ -468,12 +497,13 @@ namespace AsyncWeather.Xamarin
             Preferences.Set("offline_weather", content);
             // reverse geocoding
             Preferences.Set("offline_loc", iqcontent);
-            Preferences.Set("offline_time", thisTime.ToString("t"));
+            Preferences.Set("offline_time", thisTime.ToFileTimeUtc());
         }
 
         public void OfflineWeather()
         {
-            FindViewById<TextView>(Resource.Id.lastupdatetxt).Text = GetString(Resource.String.lastupdate) + " " + Preferences.Get("offline_time", "");
+            long l = 0;
+            FindViewById<TextView>(Resource.Id.lastupdatetxt).Text = GetString(Resource.String.lastupdate) + " " + DateTime.FromFileTimeUtc(Preferences.Get("offline_time", l)).ToLocalTime().ToString("g");
             StartProgresbar();
             string weather = Preferences.Get("offline_weather", "");
             string reverse = Preferences.Get("offline_loc", "");
@@ -584,13 +614,13 @@ namespace AsyncWeather.Xamarin
             FindViewById<TextView>(Resource.Id.today_temp_night).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[0].temp.night.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.today_feels_night).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[0].feels_like.night.ToString() + "°C";
             // Forecast
-            FindViewById<TextView>(Resource.Id.forecast1_date).Text = GetString(Resource.String.today) + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast1_date).Text = GetString(Resource.String.tomorrow) + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[1].dt).ToLocalTime().ToString("d");
             string forecast1_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[1].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast1_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast1_img));
             FindViewById<TextView>(Resource.Id.forecast1_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[1].temp.max.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast1_min).Text = GetString(Resource.String.min) + " " + oneClickApi.daily[1].temp.min.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.forecast1_pop).Text = oneClickApi.daily[1].pop.ToString("P0");
-            FindViewById<TextView>(Resource.Id.forecast2_date).Text = GetString(Resource.String.tomorrow) + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d");
+            FindViewById<TextView>(Resource.Id.forecast2_date).Text = dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("dddd") + "\n" + dtDateTime.AddSeconds(oneClickApi.daily[2].dt).ToLocalTime().ToString("d");
             string forecast2_url = "https://openweathermap.org/img/wn/" + oneClickApi.daily[2].weather[0].icon + "@4x.png";
             Picasso.Get().Load(forecast2_url).Resize(150, 150).CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast2_img));
             FindViewById<TextView>(Resource.Id.forecast2_max).Text = GetString(Resource.String.max) + " " + oneClickApi.daily[2].temp.max.ToString() + "°C";

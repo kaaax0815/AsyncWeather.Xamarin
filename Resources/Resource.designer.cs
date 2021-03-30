@@ -11494,16 +11494,13 @@ namespace AsyncWeather.Xamarin
 			public const int tempchart = 2131624032;
 			
 			// aapt resource value: 0x7F0E0061
-			public const int today = 2131624033;
+			public const int tomorrow = 2131624033;
 			
 			// aapt resource value: 0x7F0E0062
-			public const int tomorrow = 2131624034;
+			public const int w = 2131624034;
 			
 			// aapt resource value: 0x7F0E0063
-			public const int w = 2131624035;
-			
-			// aapt resource value: 0x7F0E0064
-			public const int week = 2131624036;
+			public const int week = 2131624035;
 			
 			static String()
 			{

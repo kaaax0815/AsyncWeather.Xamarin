@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Views;
 using AsyncWeather.Xamarin;
 using System.Threading.Tasks;
 
@@ -13,6 +14,13 @@ namespace Weather.Xamarin
         public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
         {
             base.OnCreate(savedInstanceState, persistentState);
+            Window.AddFlags(WindowManagerFlags.KeepScreenOn);
+            Window.AddFlags(WindowManagerFlags.TurnScreenOn);
+            Window.AddFlags(WindowManagerFlags.Fullscreen);
+            Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
+            /**SystemUiFlags flags = SystemUiFlags.HideNavigation
+                | SystemUiFlags.LayoutHideNavigation;
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)flags;*/
         }
 
         // Launches the startup task
