@@ -13,14 +13,9 @@ namespace Weather.Xamarin
     {
         public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
         {
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.HideNavigation | (StatusBarVisibility)SystemUiFlags.ImmersiveSticky; // Doesnt work
             base.OnCreate(savedInstanceState, persistentState);
-            Window.AddFlags(WindowManagerFlags.KeepScreenOn);
-            Window.AddFlags(WindowManagerFlags.TurnScreenOn);
-            Window.AddFlags(WindowManagerFlags.Fullscreen);
-            Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
-            /**SystemUiFlags flags = SystemUiFlags.HideNavigation
-                | SystemUiFlags.LayoutHideNavigation;
-            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)flags;*/
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.HideNavigation | (StatusBarVisibility)SystemUiFlags.ImmersiveSticky; // Doesnt work
         }
 
         // Launches the startup task
