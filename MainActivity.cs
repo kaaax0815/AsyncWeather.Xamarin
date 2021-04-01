@@ -24,19 +24,20 @@ using AlertDialog = Android.Support.V7.App.AlertDialog;
 namespace AsyncWeather.Xamarin
 {
     /// <summary>
-    /// Error Codes: 199 = Permission; 505 = Generic; 594 = Feature; 250 = Try Again
+    /// Error Codes: 199 = Permission; 505 = Generic; 594 = Feature; 250 = Try Again; 456 = HTTP 401 Unauthorized
     /// HTML Codes: hXXX = XXX HTML Error
+    /// "From here:" doesnt mean copied, but rather adapted. I understand all of my code, and nothing is just copy paste -> done
     /// </summary>
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
         SfLinearProgressBar sfLinearProgressBar { get; set; }
         readonly string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-        readonly string openweathermap = "ODlmNDUzZGQwMDMxNzU2OGM1NjU1ZGRkZWNlN2YyYTc=";
+        string openweathermap;
         readonly string syncfusionlicense = "TXpjMU9UazFRRE14TXpneVpUTTBNbVV6TUVwR1VpOTZOR0ZySzJ4clUwbzJlbUoxY0hwbVltNW1aa05xVkVwUVVFUTBNVzFzYkhOalVuSmFaV3M5";
-        readonly string locationiq = "cGsuMGNlZDAwYmQ5MjZkYmQ2ZDFlYTY0OTQxNDkxZjIyOGE=";
-        readonly int cachehr = 3; // Default Cache Duration
-        readonly long hto100ns = 36000000000;
+        string locationiq;
+        int cachehr; // Default Cache Duration
+        readonly long hto100ns = 36000000000; // hours to 100th nanosecond (windows filetime)
         OneClickApi oneClickApi { get; set; }
         ReverseGeocoding reverseGeocoding { get; set; }
         List<ForwardGeocoding> forwardGeocoding { get; set; }
@@ -49,6 +50,7 @@ namespace AsyncWeather.Xamarin
             SetContentView(Resource.Layout.activity_main);
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
+            SetPreferences();
             FindViewById<LinearLayout>(Resource.Id.forecast_1_layout).Click += Forecast1_Click;
             FindViewById<LinearLayout>(Resource.Id.forecast_2_layout).Click += Forecast2_Click;
             FindViewById<LinearLayout>(Resource.Id.forecast_3_layout).Click += Forecast3_Click;
@@ -104,7 +106,7 @@ namespace AsyncWeather.Xamarin
 
         private void MainActivity_EditorAction(object sender, TextView.EditorActionEventArgs e)
         {
-            if (e.ActionId == Android.Views.InputMethods.ImeAction.Search)
+            if (e.ActionId == Android.Views.InputMethods.ImeAction.Search) // If keyboard search button pressed, get text and search for city
             {
                 SearchWeather(FindViewById<EditText>(Resource.Id.autoCompleteTextView1).Text);
                 FindViewById<LinearLayout>(Resource.Id.search_layout).Visibility = ViewStates.Gone;
@@ -241,6 +243,7 @@ namespace AsyncWeather.Xamarin
             }
         }
 
+        // Boilerplate
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
@@ -250,13 +253,14 @@ namespace AsyncWeather.Xamarin
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-            /**if (id == Resource.Id.action_settings)
+            if (id == Resource.Id.action_settings)
             {
-                StartActivity(typeof(Settings));
+                StartActivity(typeof(Settings)); // Open Settings
                 return true;
-            }**/
+            }
             if (id == Resource.Id.action_refresh)
             {
+                SetPreferences(); // Update Preferences
                 if (IsOnline())
                 {
                     FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Gone;
@@ -269,7 +273,7 @@ namespace AsyncWeather.Xamarin
                 }
                 return true;
             }
-            if (id == Resource.Id.action_search)
+            if (id == Resource.Id.action_search) // Show Search layout, if pressed again hide
             {
                 if (search_clicked)
                 {
@@ -295,6 +299,7 @@ namespace AsyncWeather.Xamarin
             return base.OnOptionsItemSelected(item);
         }
 
+        // Boilerplate
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -302,11 +307,14 @@ namespace AsyncWeather.Xamarin
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+
+        // From here: https://docs.microsoft.com/de-de/xamarin/essentials/connectivity?tabs=android
         public bool IsOnline()
         {
             NetworkAccess current = Connectivity.NetworkAccess;
-            return current == NetworkAccess.Internet;
+            return current == NetworkAccess.Internet; // If Network equals to Internet return true
         }
+
         // Get and Returns Location or Error
         public async Task<double[]> GetLocation()
         {
@@ -411,6 +419,7 @@ namespace AsyncWeather.Xamarin
             }
         }
 
+        // From here: https://briancaos.wordpress.com/2017/11/03/using-c-httpclient-from-sync-and-async-code/
         private static readonly HttpClient _httpClient = new HttpClient();
 
         public static async Task<string> Get(string url)
@@ -418,8 +427,16 @@ namespace AsyncWeather.Xamarin
             try
             {
                 using HttpResponseMessage result1 = await _httpClient.GetAsync($"{url}");
-                string content = await result1.Content.ReadAsStringAsync();
-                return content;
+                if (result1.IsSuccessStatusCode)
+                {
+                    string content = await result1.Content.ReadAsStringAsync();
+                    return content;
+                }
+                else if (result1.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return "456";
+                }
+                return "250";
             }
             catch (Exception)
             {
@@ -427,6 +444,7 @@ namespace AsyncWeather.Xamarin
             }
         }
 
+        // From here: https://briancaos.wordpress.com/2017/11/03/using-c-httpclient-from-sync-and-async-code/ and https://stackoverflow.com/questions/4015324/how-to-make-an-http-post-web-request
         public static async Task<string> Post(string content)
         {
             Dictionary<string, string> values = new Dictionary<string, string>
@@ -442,7 +460,7 @@ namespace AsyncWeather.Xamarin
             return response;
         }
 
-        public void InitProgressbar()
+        public void InitProgressbar() // Init Syncfusion Progressbar https://help.syncfusion.com/xamarin-android/progressbar/overview
         {
             RelativeLayout relativeLayout = FindViewById<RelativeLayout>(Resource.Id.relativeLayout1);
             sfLinearProgressBar = new SfLinearProgressBar(this)
@@ -474,7 +492,23 @@ namespace AsyncWeather.Xamarin
                 double[] loc = await GetLocation();
                 if (loc[0] > 180) { return; }
                 string weather = await GetWeather(loc, lang, Encoding.UTF8.GetString(Convert.FromBase64String(openweathermap)));
+                if (weather == "456") // If Bad API Quit and Reset
+                {
+                    Toast.MakeText(ApplicationContext, "Bad API Key. Reseting...", ToastLength.Long).Show();
+                    Preferences.Remove("openweathermap");
+                    SetPreferences();
+                    OnlineWeather();
+                    return;
+                }
                 string reverse = await GetReverseLocation(loc, Encoding.UTF8.GetString(Convert.FromBase64String(locationiq)));
+                if (reverse == "456") // If Bad API Quit and Reset
+                {
+                    Toast.MakeText(ApplicationContext, "Bad API Key. Reseting...", ToastLength.Long).Show();
+                    Preferences.Remove("locationiq");
+                    SetPreferences();
+                    OnlineWeather();
+                    return;
+                }
                 DeserializeWeather(weather);
                 DeserializeReverse(reverse);
                 SavePreferences(weather, reverse);
@@ -500,10 +534,10 @@ namespace AsyncWeather.Xamarin
             Preferences.Set("offline_time", thisTime.ToFileTimeUtc());
         }
 
-        public void OfflineWeather()
+        public void OfflineWeather() // Get Weather from Cache (Preferences)
         {
             long l = 0;
-            FindViewById<TextView>(Resource.Id.lastupdatetxt).Text = GetString(Resource.String.lastupdate) + " " + DateTime.FromFileTimeUtc(Preferences.Get("offline_time", l)).ToLocalTime().ToString("g");
+            FindViewById<TextView>(Resource.Id.lastupdatetxt).Text = GetString(Resource.String.lastupdate) + "\n" + DateTime.FromFileTimeUtc(Preferences.Get("offline_time", l)).ToLocalTime().ToString("g");
             StartProgresbar();
             string weather = Preferences.Get("offline_weather", "");
             string reverse = Preferences.Get("offline_loc", "");
@@ -519,11 +553,27 @@ namespace AsyncWeather.Xamarin
         {
             StartProgresbar();
             string location = await GetForwardLocation(search, Encoding.UTF8.GetString(Convert.FromBase64String(locationiq)));
+            if (location == "456") // If Bad API Quit and Reset
+            {
+                Toast.MakeText(ApplicationContext, "Bad API Key. Reseting...", ToastLength.Long).Show();
+                Preferences.Remove("locationiq");
+                SetPreferences();
+                SearchWeather(search);
+                return;
+            }
             DeserializeForward(location);
             double[] searchloc = { forwardGeocoding[0].lat, forwardGeocoding[0].lon };
             string weather = await GetWeather(searchloc, lang, Encoding.UTF8.GetString(Convert.FromBase64String(openweathermap)));
+            if (weather == "456") // If Bad API Quit and Reset
+            {
+                Toast.MakeText(ApplicationContext, "Bad API Key. Reseting...", ToastLength.Long).Show();
+                Preferences.Remove("openweathermap");
+                SetPreferences();
+                SearchWeather(search);
+                return;
+            }
             DeserializeWeather(weather);
-            SetText("forward");
+            SetText("forward"); // Set Text in "forward" mode
             SetChart();
             SetAlerts();
             StopProgressbar();
@@ -544,6 +594,7 @@ namespace AsyncWeather.Xamarin
             forwardGeocoding = JsonConvert.DeserializeObject<List<ForwardGeocoding>>(json);
         }
 
+        // From here: https://riptutorial.com/xamarin-android/example/17207/simple-alert-dialog-example
         public void ShowMessageBox(string title, string message)
         {
             TextView textview = new TextView(this)
@@ -577,9 +628,13 @@ namespace AsyncWeather.Xamarin
             else
             {
                 if (reverseGeocoding.address.city != null)
+                {
                     FindViewById<TextView>(Resource.Id.city_txt).Text = reverseGeocoding.address.city;
+                }
                 else if (reverseGeocoding.address.village != null)
+                {
                     FindViewById<TextView>(Resource.Id.city_txt).Text = reverseGeocoding.address.village;
+                }
             }
             DateTime thisDay = DateTime.Today;
             FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
@@ -666,8 +721,11 @@ namespace AsyncWeather.Xamarin
             FindViewById<TextView>(Resource.Id.temp_night).Text = GetString(Resource.String.temp) + " " + oneClickApi.daily[1].temp.night.ToString() + "°C";
             FindViewById<TextView>(Resource.Id.feels_night).Text = GetString(Resource.String.feelslike) + " " + oneClickApi.daily[1].feels_like.night.ToString() + "°C";
         }
-        public void SetChart()
+
+        // Set Syncfusion Chart https://help.syncfusion.com/xamarin-android/sfchart/overview
+        public async void SetChart()
         {
+            await Task.Delay(1000);
             // Chart
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             SfChart chart = FindViewById<SfChart>(Resource.Id.sfChart1);
@@ -779,24 +837,37 @@ namespace AsyncWeather.Xamarin
             TextView alerts = FindViewById<TextView>(Resource.Id.alerts);
             if (oneClickApi.alerts != null)
             {
-                foreach (Alert alert in oneClickApi.alerts)
+                foreach (Alert alert in oneClickApi.alerts) // Loop through alerts and at each one to TextView
                 {
                     string alertstext = alerts.Text;
                     if (alertstext == GetString(Resource.String.placeholder) || alertstext == GetString(Resource.String.noalerts))
                     {
                         alerts.Text = alert.sender_name + ": " + alert.description;
-                        //alerts.TextFormatted = HtmlCompat.FromHtml(alert.sender_name + ": </u>" + alert.description, HtmlCompat.FromHtmlModeLegacy);
                     }
                     else
                     {
                         alerts.Text = alertstext + "\n---\n" + alert.sender_name + ": " + alert.description;
-                        //alerts.TextFormatted = HtmlCompat.FromHtml(alerts.TextFormatted + "<br>---<br>" + "<u>" + alert.sender_name + ": </u>" + alert.description, HtmlCompat.FromHtmlModeCompact);
                     }
                 }
             }
             else
             {
                 alerts.Text = GetString(Resource.String.noalerts);
+            }
+        }
+        public void SetPreferences() // Get Preferences, if not present use default values (base64)
+        {
+            try
+            {
+                openweathermap = Preferences.Get("openweathermap", "ODlmNDUzZGQwMDMxNzU2OGM1NjU1ZGRkZWNlN2YyYTc=");
+                locationiq = Preferences.Get("locationiq", "cGsuMGNlZDAwYmQ5MjZkYmQ2ZDFlYTY0OTQxNDkxZjIyOGE=");
+                cachehr = Preferences.Get("cachehr", 3);
+            }
+            catch (Java.Lang.ClassCastException)
+            {
+                Toast.MakeText(ApplicationContext, "Bad Configuration. Reseting...", ToastLength.Long).Show();
+                Preferences.Clear();
+                SetPreferences();
             }
         }
     }
