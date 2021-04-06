@@ -387,7 +387,7 @@
             android:layout_marginTop="35px"
             android:layout_below="@id/today_info"
             android:id="@+id/seperator1_line"
-            android:background="#767676" />
+            android:background="@color/divider" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -445,7 +445,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -494,7 +494,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -520,8 +520,8 @@
                     android:id="@+id/forecast_3_layout">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_gravity="center"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:gravity="center_horizontal"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast3_date"/>
@@ -543,7 +543,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -564,13 +564,13 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_4_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast4_date"/>
@@ -592,7 +592,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -613,13 +613,13 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_5_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast5_date"/>
@@ -641,7 +641,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -662,13 +662,13 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_6_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast6_date"/>
@@ -690,7 +690,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -711,13 +711,13 @@
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
                     android:layout_marginLeft="15px"
                     android:orientation="vertical"
                     android:id="@+id/forecast_7_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder"
                         android:id="@+id/forecast7_date"/>
@@ -739,7 +739,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/divider" />
                     <TextView 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -885,7 +885,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="50px"
-                android:textColor="@android:color/black"
                 android:drawableLeft="@drawable/main_warning"
                 android:drawablePadding="10px"
                 android:text="@string/alerts"/>

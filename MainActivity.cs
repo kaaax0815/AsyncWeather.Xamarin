@@ -471,6 +471,7 @@ namespace AsyncWeather.Xamarin
                 IsIndeterminate = true
             };
             relativeLayout.AddView(sfLinearProgressBar);
+            sfLinearProgressBar.TrackColor = Android.Graphics.Color.ParseColor(GetString(Resource.Color.darkmode));
             sfLinearProgressBar.Visibility = ViewStates.Gone;
         }
 
@@ -837,6 +838,7 @@ namespace AsyncWeather.Xamarin
             TextView alerts = FindViewById<TextView>(Resource.Id.alerts);
             if (oneClickApi.alerts != null)
             {
+                alerts.Text = GetString(Resource.String.placeholder);
                 foreach (Alert alert in oneClickApi.alerts) // Loop through alerts and at each one to TextView
                 {
                     string alertstext = alerts.Text;
