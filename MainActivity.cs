@@ -34,7 +34,7 @@ namespace AsyncWeather.Xamarin
         SfLinearProgressBar sfLinearProgressBar { get; set; }
         readonly string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         string openweathermap;
-        readonly string syncfusionlicense = "TXpjMU9UazFRRE14TXpneVpUTTBNbVV6TUVwR1VpOTZOR0ZySzJ4clUwbzJlbUoxY0hwbVltNW1aa05xVkVwUVVFUTBNVzFzYkhOalVuSmFaV3M5";
+        readonly string syncfusionlicense = "TkRJME9UZ3pRRE14TXpreVpUTXhNbVV6TUZVNFEyMXJVRXhMYUVOb1lVUklXSEJuTlM5VlpXWmlkM1pLVFRCSFQxRktla0o0UkZwSFpWRXdaVVU5";
         string locationiq;
         int cachehr; // Default Cache Duration
         readonly long hto100ns = 36000000000; // hours to 100th nanosecond (windows filetime)
@@ -831,6 +831,7 @@ namespace AsyncWeather.Xamarin
                 snowseries.Color = Android.Graphics.Color.LightGray;
                 chart.Series.Add(snowseries);
             }
+            chart.Legend.LabelStyle.TextColor = Android.Graphics.Color.White;
             chart.Legend.Visibility = Visibility.Visible;
         }
         public void SetAlerts()
