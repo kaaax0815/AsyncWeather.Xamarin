@@ -81,6 +81,7 @@
             android:layout_height="wrap_content"
             android:textSize="75px"
             android:textAlignment="center"
+            android:gravity="center_horizontal"
             android:layout_below="@id/nonetwork_layout"
             android:id="@+id/city_txt" />
         <TextView

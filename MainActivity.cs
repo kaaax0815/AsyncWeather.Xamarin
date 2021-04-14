@@ -41,8 +41,9 @@ namespace AsyncWeather.Xamarin
         OneClickApi oneClickApi { get; set; }
         ReverseGeocoding reverseGeocoding { get; set; }
         List<ForwardGeocoding> forwardGeocoding { get; set; }
-        ArrayAdapter<string> adapter { get; set; }
-        List<string> autocomplete = new List<string>();
+        ArrayAdapter adapter { get; set; }
+        List<string> autocomplete { get; set; }
+        List<string> already = new List<string>(); // Filter out duplicates
         bool search_clicked = false;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -63,9 +64,9 @@ namespace AsyncWeather.Xamarin
             FindViewById<Button>(Resource.Id.nointernet_retry).Click += Retry_Click;
             FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).EditorAction += MainActivity_EditorAction;
             AutoCompleteTextView autoComplete = FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1);
-            adapter = new ArrayAdapter<string>(this, Resource.Layout.list_item, autocomplete);
+            autocomplete = new List<string>() { "" };
+            adapter = new ArrayAdapter(this, Resource.Layout.list_item, autocomplete);
             autoComplete.Adapter = adapter;
-            autoComplete.Threshold = 5;
             FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).AfterTextChanged += MainActivity_AfterTextChanged;
             InitProgressbar();
             if (IsOnline())
@@ -107,18 +108,40 @@ namespace AsyncWeather.Xamarin
             }
         }
 
+        int counter = 0;
         private async void MainActivity_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
         {
-            adapter.Clear();
-            List<AutoComplete> auto = await GetAutoComplete(FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).Text, Encoding.UTF8.GetString(Convert.FromBase64String(locationiq)));
-            Toast.MakeText(ApplicationContext, auto[0].display_place, ToastLength.Short).Show();
-            List<string> temp = new List<string>();
-            foreach (AutoComplete city in auto)
+            try
             {
-                temp.Add(city.display_place);
+                if (counter < 10)
+                {
+                    counter++;
+                    return;
+                }
+
+                autocomplete.Clear();
+                List<AutoComplete> auto = await GetAutoComplete(FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).Text, Encoding.UTF8.GetString(Convert.FromBase64String(locationiq)));
+                foreach (AutoComplete city in auto)
+                {
+                    if (already.Contains(city.display_place)) // Filter duplicates
+                    {
+                        continue;
+                    }
+                    already.Add(city.display_place);
+                    autocomplete.Add(city.display_place);
+                }
+                adapter.AddAll(autocomplete);
+                adapter.NotifyDataSetChanged();
             }
-            autocomplete = temp;
-            adapter.NotifyDataSetChanged();
+            catch (Exception ex)
+            {
+                if (ex.Message == "h429" || ex.Message == "h404" || ex.Message == "250")
+                {
+                    await Task.Delay(1000);
+                    return;
+                }
+                ShowMessageBox(ex.Message, ex.StackTrace);
+            }
 
         }
 
@@ -442,17 +465,19 @@ namespace AsyncWeather.Xamarin
             string auto = "";
             try
             {
-                auto = await Get($"https://api.locationiq.com/v1/autocomplete.php?key={key}&q={search}&accept-language={lang}&format=json&limit=5");
+                auto = await Get($"https://api.locationiq.com/v1/autocomplete.php?key={key}&q={search}&accept-language={lang}&format=json&limit=10");
                 List<AutoComplete> autoComplete = JsonConvert.DeserializeObject<List<AutoComplete>>(auto);
                 return autoComplete;
             }
+            catch (JsonReaderException)
+            {
+                throw new Exception("250");
+            }
             catch (Exception forwardloce)
             {
-                Toast.MakeText(ApplicationContext, auto, ToastLength.Long).Show();
                 string response = await Post(forwardloce.ToString());
                 ShowMessageBox(GetString(Resource.String.requesterror), GetString(Resource.String.requesterror_dev) + "<a href=\"" + response + "\">" + response + "</a>");
-                List<AutoComplete> autoComplete = new List<AutoComplete>();
-                return autoComplete;
+                throw new Exception(auto);
             }
         }
 
