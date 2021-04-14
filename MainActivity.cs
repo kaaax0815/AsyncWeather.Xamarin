@@ -41,6 +41,8 @@ namespace AsyncWeather.Xamarin
         OneClickApi oneClickApi { get; set; }
         ReverseGeocoding reverseGeocoding { get; set; }
         List<ForwardGeocoding> forwardGeocoding { get; set; }
+        ArrayAdapter<string> adapter { get; set; }
+        List<string> autocomplete = new List<string>();
         bool search_clicked = false;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -59,11 +61,12 @@ namespace AsyncWeather.Xamarin
             FindViewById<LinearLayout>(Resource.Id.forecast_6_layout).Click += Forecast6_Click;
             FindViewById<LinearLayout>(Resource.Id.forecast_7_layout).Click += Forecast7_Click;
             FindViewById<Button>(Resource.Id.nointernet_retry).Click += Retry_Click;
-            FindViewById<EditText>(Resource.Id.autoCompleteTextView1).EditorAction += MainActivity_EditorAction;
-            string[] COUNTRIES = { "Wülfershausen", "Kassel", "Berlin" };
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this, Resource.Layout.list_item, COUNTRIES);
-            AutoCompleteTextView textView = FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1);
-            textView.Adapter = adapter;
+            FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).EditorAction += MainActivity_EditorAction;
+            AutoCompleteTextView autoComplete = FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1);
+            adapter = new ArrayAdapter<string>(this, Resource.Layout.list_item, autocomplete);
+            autoComplete.Adapter = adapter;
+            autoComplete.Threshold = 5;
+            FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).AfterTextChanged += MainActivity_AfterTextChanged;
             InitProgressbar();
             if (IsOnline())
             {
@@ -102,6 +105,21 @@ namespace AsyncWeather.Xamarin
                 FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Visible;
                 OfflineWeather();
             }
+        }
+
+        private async void MainActivity_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
+        {
+            adapter.Clear();
+            List<AutoComplete> auto = await GetAutoComplete(FindViewById<AutoCompleteTextView>(Resource.Id.autoCompleteTextView1).Text, Encoding.UTF8.GetString(Convert.FromBase64String(locationiq)));
+            Toast.MakeText(ApplicationContext, auto[0].display_place, ToastLength.Short).Show();
+            List<string> temp = new List<string>();
+            foreach (AutoComplete city in auto)
+            {
+                temp.Add(city.display_place);
+            }
+            autocomplete = temp;
+            adapter.NotifyDataSetChanged();
+
         }
 
         private void MainActivity_EditorAction(object sender, TextView.EditorActionEventArgs e)
@@ -419,6 +437,25 @@ namespace AsyncWeather.Xamarin
             }
         }
 
+        public async Task<List<AutoComplete>> GetAutoComplete(string search, string key)
+        {
+            string auto = "";
+            try
+            {
+                auto = await Get($"https://api.locationiq.com/v1/autocomplete.php?key={key}&q={search}&accept-language={lang}&format=json&limit=5");
+                List<AutoComplete> autoComplete = JsonConvert.DeserializeObject<List<AutoComplete>>(auto);
+                return autoComplete;
+            }
+            catch (Exception forwardloce)
+            {
+                Toast.MakeText(ApplicationContext, auto, ToastLength.Long).Show();
+                string response = await Post(forwardloce.ToString());
+                ShowMessageBox(GetString(Resource.String.requesterror), GetString(Resource.String.requesterror_dev) + "<a href=\"" + response + "\">" + response + "</a>");
+                List<AutoComplete> autoComplete = new List<AutoComplete>();
+                return autoComplete;
+            }
+        }
+
         // From here: https://briancaos.wordpress.com/2017/11/03/using-c-httpclient-from-sync-and-async-code/
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -436,7 +473,7 @@ namespace AsyncWeather.Xamarin
                 {
                     return "456";
                 }
-                return "250";
+                return "h" + (int)result1.StatusCode;
             }
             catch (Exception)
             {
@@ -1093,4 +1130,23 @@ namespace AsyncWeather.Xamarin
         public string icon { get; set; }
 #pragma warning restore IDE1006 // Benennungsstile
     }
+    // AutoComplete
+    public class AutoComplete
+    {
+        public string place_id { get; set; }
+        public string osm_id { get; set; }
+        public string osm_type { get; set; }
+        public string licence { get; set; }
+        public string lat { get; set; }
+        public string lon { get; set; }
+        public List<string> boundingbox { get; set; }
+        public string @class { get; set; }
+        public string type { get; set; }
+        public string display_name { get; set; }
+        public string display_place { get; set; }
+        public string display_address { get; set; }
+        public Address address { get; set; }
+    }
+
+
 }
