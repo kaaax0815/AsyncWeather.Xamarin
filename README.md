@@ -1,3 +1,4 @@
+Not maintained anymore. Way better alternatives out there
 # AsyncWeather.Xamarin
 
 C# Asnyc Weather App written in Xamarin.Android
